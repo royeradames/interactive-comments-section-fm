@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useReducer, useRef, useState, type Dispatch, type FormEvent } from "react";
+import { useEffect, useId, useReducer, useRef, useState, type Dispatch, type FormEvent, type KeyboardEvent } from "react";
 import { PlusIcon, MinusIcon, ReplyIcon, EditIcon, DeleteIcon } from "./icons";
 import {
   commentsReducer, currentUser, displayedScore, initialComments, initialState, parseStoredComments,
@@ -136,6 +136,15 @@ export function CommentsSection() {
   const [announcement, setAnnouncement] = useState({ message: "", sequence: 0 });
   const [resetCount, setResetCount] = useState(0);
   const dialog = useRef<HTMLDialogElement>(null);
+  // Chrome lets Tab leave a modal dialog for the browser's own controls; keep it on the two dialog buttons.
+  function keepFocusInDialog(event: KeyboardEvent<HTMLDialogElement>) {
+    if (event.key !== "Tab") return;
+    const buttons = [...event.currentTarget.querySelectorAll<HTMLButtonElement>("button")];
+    const at = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    const next = event.shiftKey ? (at <= 0 ? buttons.length - 1 : at - 1) : (at === buttons.length - 1 ? 0 : at + 1);
+    event.preventDefault();
+    buttons[next]?.focus();
+  }
   const cancelButton = useRef<HTMLButtonElement>(null);
   const main = useRef<HTMLElement>(null);
   const pendingDelete = useRef<{ id: number; trigger: HTMLButtonElement } | null>(null);
@@ -213,7 +222,7 @@ export function CommentsSection() {
         </div>
       </main>
       <form id="reset-demo" onSubmit={reset} />
-      <dialog ref={dialog} className="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description" onClose={returnFocus}>
+      <dialog ref={dialog} className="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-description" onClose={returnFocus} onKeyDown={keepFocusInDialog}>
         <h2 id="delete-title">Delete comment</h2>
         <p id="delete-description">Are you sure you want to delete this comment? This will remove the comment and can&apos;t be undone.</p>
         <div className="dialog-actions">

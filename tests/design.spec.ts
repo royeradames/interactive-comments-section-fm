@@ -4,15 +4,18 @@ import { box, layoutProblems, open, smallText, textContrast } from "./helpers";
 const siteName = "Interactive Comments Section";
 const siteUrl = "https://interactive-comments-section-fm.royeradames.com/";
 
+// Next may drop the trailing slash of metadataBase in og:url and canonical; both forms name the same page.
+const siteUrlPattern = /^https:\/\/interactive-comments-section-fm\.royeradames\.com\/?$/;
+
 test("declares matching identity, canonical, sharing image, icons and the two-line attribution", async ({ page }) => {
   await open(page);
   await expect(page).toHaveTitle("Interactive comments | Interactive Comments Section");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /Frontend Mentor.*fictional comments/);
   await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", siteName);
-  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", siteUrl);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", siteUrlPattern);
   const jsonLd: unknown = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent()) ?? "{}");
   expect(jsonLd).toEqual({ "@context": "https://schema.org", "@type": "WebSite", name: siteName, url: siteUrl });
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", siteUrl);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", siteUrlPattern);
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /opengraph-image/);
   await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute("content", /Interactive Comments Section/);
   await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
