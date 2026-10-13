@@ -20,7 +20,7 @@ test("declares matching identity, canonical, sharing image, icons and the two-li
   await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute("href", "/icon.svg");
   await expect(page.locator('link[rel="icon"][sizes="96x96"]')).toHaveAttribute("href", "/icon-96.png");
   await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", "/apple-touch-icon.png");
-  // The caller exports both PNG icons from public/icon.svg before running the suite.
+  // Both PNG icons are exported from public/icon.svg and committed.
   for (const path of ["/icon.svg", "/icon-96.png", "/apple-touch-icon.png", "/opengraph-image"]) {
     expect((await page.request.get(path)).status(), path).toBe(200);
   }
