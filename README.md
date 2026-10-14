@@ -20,5 +20,3 @@ npm ci
 npm run lint && npm run typecheck && npm run build
 npm test   # Playwright: comments, replies, modal focus, voting, persistence, identity, widths and contrast
 ```
-
-The implementation includes these tests. Installs, builds, tests, servers and browser verification are left to the caller; none were run during this edit-only task.
